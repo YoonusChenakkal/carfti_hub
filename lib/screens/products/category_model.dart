@@ -1,6 +1,6 @@
 class CategoryModel {
   final int id;
-  final String categoryName;
+  late final String categoryName;
   final String categoryImage;
   final String createdAt;
 

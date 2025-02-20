@@ -9,8 +9,8 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double offerPrice = double.tryParse(product.offerPrice) ?? 0.0;
-    double price = double.tryParse(product.price) ?? 0.0;
+    double offerPrice = product.offerPrice ?? 0.0;
+    double price = (product.price) ?? 0.0;
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),

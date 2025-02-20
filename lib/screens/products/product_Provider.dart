@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:craftify_vendor/common/flush_bar.dart';
+import 'package:craftify_vendor/const/local_storage.dart';
 import 'package:craftify_vendor/screens/products/category_model.dart';
 import 'package:craftify_vendor/screens/products/product_model.dart';
 import 'package:craftify_vendor/screens/products/product_repository.dart';
@@ -163,14 +164,32 @@ class ProductProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      int? userId = await LocalStorage.getUser();
+      if (userId == null) {
+        showFlushbar(
+          context: context,
+          color: Colors.red,
+          icon: Icons.error,
+          message: 'Please log in again.',
+        );
+        isLoading = false;
+        notifyListeners();
+        return;
+      }
       // Call API to add product
+
       await _productRepo.addProduct(
+        userId: userId,
         productName: tcProductName.text,
         productDescription: tcProductDescription.text,
         price: tcPrice.text,
         offerPrice: tcOfferPrice.text,
         categoryId: selectedCategory!.id,
         images: selectedImages,
+        isOfferProduct: isOfferProduct,
+        isNewArrival: isNewArrival,
+        isPopularProduct: isPopular,
+        isTrendingProduct: isTrending,
       );
 
       print('✅ Product added successfully');
@@ -183,14 +202,7 @@ class ProductProvider extends ChangeNotifier {
       );
 
       // Clear form after success
-      tcProductName.clear();
-      tcProductDescription.clear();
-      tcPrice.clear();
-      tcOfferPrice.clear();
-      selectedImages.clear();
-      selectedCategory = null;
-
-      notifyListeners();
+      reset();
     } catch (e) {
       showFlushbar(
         context: context,
@@ -203,5 +215,62 @@ class ProductProvider extends ChangeNotifier {
       isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> updateProduct(int productId, BuildContext context) async {
+    isLoading = true;
+    notifyListeners();
+
+    try {
+      // Call API to add product
+
+      await _productRepo.updateProduct(
+        productId: productId,
+        productName: tcProductName.text,
+        productDescription: tcProductDescription.text,
+        price: tcPrice.text,
+        offerPrice: tcOfferPrice.text,
+        categoryId: selectedCategory!.id,
+        isOfferProduct: isOfferProduct,
+        isNewArrival: isNewArrival,
+        isPopularProduct: isPopular,
+        isTrendingProduct: isTrending,
+      );
+
+      print('✅ Product Updated successfully');
+      fetchProducts(context);
+
+      showFlushbar(
+        context: context,
+        color: Colors.cyan,
+        icon: Icons.check_circle,
+        message: 'Product Updated successfully!',
+      );
+
+      // Clear form after success
+      reset();
+    } catch (e) {
+      showFlushbar(
+        context: context,
+        color: Colors.red,
+        icon: Icons.error,
+        message: 'Updating Product Failed', // Clear error message
+      );
+      print("❌ Product Updating failed: $e");
+    } finally {
+      isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  reset() {
+    tcProductName.clear();
+    tcProductDescription.clear();
+    tcPrice.clear();
+    tcOfferPrice.clear();
+    selectedImages.clear();
+    selectedCategory = null;
+
+    notifyListeners();
   }
 }

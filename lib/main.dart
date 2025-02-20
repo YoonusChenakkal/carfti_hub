@@ -1,14 +1,16 @@
 import 'package:craftify_vendor/common/product_details_page.dart';
 import 'package:craftify_vendor/screens/Login/login_page.dart';
 import 'package:craftify_vendor/screens/bottom%20navigation%20bar/bottom_bar.dart';
-import 'package:craftify_vendor/screens/home_page.dart';
+import 'package:craftify_vendor/screens/home/home_page.dart';
 import 'package:craftify_vendor/screens/products/add_product_page.dart';
+import 'package:craftify_vendor/screens/products/edit_product_page.dart';
 import 'package:craftify_vendor/screens/products/product_Provider.dart';
-import 'package:craftify_vendor/screens/profile/model/provider/profile_provider.dart';
+import 'package:craftify_vendor/screens/profile/provider/profile_provider.dart';
 import 'package:craftify_vendor/screens/profile/profile_page.dart';
 import 'package:craftify_vendor/screens/Auth/auth_provider.dart';
 import 'package:craftify_vendor/screens/Auth/register_page.dart';
 import 'package:craftify_vendor/screens/Auth/store_setup_page.dart';
+import 'package:craftify_vendor/screens/splashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
@@ -29,9 +31,9 @@ class MainApp extends StatelessWidget {
     return Sizer(builder: (context, orientation, deviceType) {
       return MaterialApp(
           theme: ThemeData(scaffoldBackgroundColor: Colors.white),
-          home: LoginPage(),
-          initialRoute: '/bottomBar',
+          initialRoute: '/splashScreen',
           routes: {
+            '/splashScreen': (context) => SplashScreen(),
             '/login': (context) => LoginPage(),
             '/register': (context) => RegisterPage(),
             '/storeSetup': (context) => StoreSetupPage(),
@@ -39,7 +41,8 @@ class MainApp extends StatelessWidget {
             '/home': (context) => HomePage(),
             '/profile': (context) => ProfilePage(),
             '/addProduct': (context) => AddProductPage(),
-            '/productDetails' : (context)=> ProductDetailPage()
+            '/productDetails': (context) => ProductDetailPage(),
+            '/editProduct': (context) => EditProductPage()
           });
     });
   }

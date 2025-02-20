@@ -1,38 +1,56 @@
 import 'package:craftify_vendor/common/button.dart';
 import 'package:craftify_vendor/common/custom_app_bar.dart';
-import 'package:craftify_vendor/common/flush_bar.dart';
 import 'package:craftify_vendor/common/form_field_features.dart';
 import 'package:craftify_vendor/screens/products/category_dialog_box.dart';
+import 'package:craftify_vendor/screens/products/category_model.dart';
 import 'package:craftify_vendor/screens/products/offer_dialog_box.dart';
-import 'package:craftify_vendor/screens/products/image_pick_section.dart';
 import 'package:craftify_vendor/screens/products/product_Provider.dart';
+import 'package:craftify_vendor/screens/products/product_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class AddProductPage extends StatelessWidget {
-  const AddProductPage({super.key});
+class EditProductPage extends StatelessWidget {
+  const EditProductPage({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    ProductModel product = args as ProductModel;
+
     final _formKey = GlobalKey<FormState>();
-    final productProvider = Provider.of<ProductProvider>(
-      context,
+    final productProvider = Provider.of<ProductProvider>(context);
+
+    productProvider.tcProductName.text = product.productName;
+    productProvider.tcProductDescription.text = product.productDescription;
+    productProvider.selectedCategory = CategoryModel(
+      id: product.category,
+      categoryName: product.categoryName,
+      categoryImage: '',
+      createdAt: '',
     );
+
+    productProvider.tcPrice.text = product.price.toString();
+    productProvider.tcOfferPrice.text = product.offerPrice.toString();
+    productProvider.isOfferProduct = product.isOfferProduct;
+    productProvider.isPopular = product.popularProducts;
+    productProvider.isNewArrival = product.newArrival;
+    productProvider.isTrending = product.trendingOne;
+
     String getSelectedOffers(ProductProvider productProvider) {
       List<String> selectedOffers = [];
-
       if (productProvider.isOfferProduct) selectedOffers.add('Offer Product');
       if (productProvider.isPopular) selectedOffers.add('Popular Product');
       if (productProvider.isNewArrival) selectedOffers.add('New Arrival');
       if (productProvider.isTrending) selectedOffers.add('Trending Product');
-
       return selectedOffers.isNotEmpty ? selectedOffers.join(', ') : 'Select';
     }
 
     return Scaffold(
-      appBar: customAppBar(title: 'Add Product'),
+      appBar: customAppBar(title: 'Edit Product Details'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -40,12 +58,7 @@ class AddProductPage extends StatelessWidget {
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 2.h),
-
-                // Image Upload Section
-                ImagePickSection(),
-
-                SizedBox(height: 3.h),
+                SizedBox(height: 5.h),
 
                 // Product Name
                 TextFormField(
@@ -105,8 +118,7 @@ class AddProductPage extends StatelessWidget {
                 InkWell(
                   onTap: () async {
                     if (!productProvider.isLoading) {
-                      await productProvider.fetchCategories(
-                          context); // Fetch categories before opening the dialog
+                      await productProvider.fetchCategories(context);
                       showCategoryDialog(context);
                     }
                   },
@@ -115,9 +127,8 @@ class AddProductPage extends StatelessWidget {
                     decoration: textFormFieldDecoration(
                       hinttext: productProvider.isLoading
                           ? 'Fetching Categories...'
-                          : (productProvider.selectedCategory == null
-                              ? 'Select Category'
-                              : productProvider.selectedCategory!.categoryName),
+                          : productProvider.selectedCategory?.categoryName ??
+                              'Select Category',
                       prefixIcon: Icons.category_outlined,
                     ),
                   ),
@@ -125,7 +136,7 @@ class AddProductPage extends StatelessWidget {
 
                 SizedBox(height: 1.h),
 
-                // selct  Offers
+                // Select Offers
                 InkWell(
                   onTap: () {
                     showOfferDialogBox(context);
@@ -141,32 +152,15 @@ class AddProductPage extends StatelessWidget {
 
                 SizedBox(height: 3.h),
 
-                // Add Product Button
+                // Update Product Button
                 customButton(
                   isLoading: productProvider.isLoading,
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      if (productProvider.selectedImages.isEmpty) {
-                        showFlushbar(
-                          context: context,
-                          color: Colors.red,
-                          icon: Icons.image_not_supported,
-                          message: 'Please select at least one product image',
-                        );
-                        return;
-                      } else if (productProvider.selectedCategory == null) {
-                        showFlushbar(
-                          context: context,
-                          color: Colors.red,
-                          icon: Icons.category_rounded,
-                          message: 'Please select Category',
-                        );
-                      } else {
-                        productProvider.addProduct(context);
-                      }
+                      productProvider.updateProduct(product.id, context);
                     }
                   },
-                  buttonName: 'Add Product',
+                  buttonName: 'Update Product',
                   color: Colors.cyan,
                 ),
               ],

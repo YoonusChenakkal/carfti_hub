@@ -2,7 +2,7 @@ import 'package:craftify_vendor/common/button.dart';
 import 'package:craftify_vendor/const/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:craftify_vendor/screens/profile/model/provider/profile_provider.dart';
+import 'package:craftify_vendor/screens/profile/provider/profile_provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:intl/intl.dart';
 
@@ -99,11 +99,12 @@ class ProfilePage extends StatelessWidget {
               Text(
                 user.name,
                 style: TextStyle(
-                  fontSize: 25,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               SizedBox(height: 1.5.h),
+              ratingSection(),
               // Enable/Disable Switch
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 25.0),
@@ -195,6 +196,63 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  ratingSection() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        // Rating Container with Gradient Background, Rounded Corners, and Shadow
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.orange.shade700,
+                Colors.orange.shade400
+              ], // Gradient color for added depth
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(
+                30), // Fully rounded corners for a sleek look
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2), // Subtle shadow for depth
+                blurRadius: 10,
+                offset:
+                    Offset(4, 4), // Shadow position for better elevation effect
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize
+                .min, // Ensures the container takes up only necessary space
+            children: [
+              // Rating Text with a bold and elegant style
+              Text(
+                '4.5', // Displaying decimal values for a realistic rating
+                style: TextStyle(
+                  fontSize: 20, // Larger font size for visibility
+                  fontWeight: FontWeight.w700, // Bold to emphasize the rating
+                  color: Colors
+                      .white, // White color for contrast against the gradient
+                ),
+              ),
+              SizedBox(width: 8), // Space between the rating and the star
+
+              // Star Icon with custom color and size
+              Icon(
+                Icons.star,
+                color: Colors
+                    .white, // White color for the icon to match the rating text
+                size: 28, // Medium size for the star
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

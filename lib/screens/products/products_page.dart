@@ -4,8 +4,24 @@ import 'package:craftify_vendor/screens/products/product_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
+
+  @override
+  State<ProductsPage> createState() => _ProductsPageState();
+}
+
+class _ProductsPageState extends State<ProductsPage> {
+  @override
+  void initState() {
+    super.initState();
+
+    // Fetch products only once when the screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ProductProvider>(context, listen: false)
+          .fetchProducts(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,15 +35,15 @@ class ProductsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
-                  onChanged: (value) {
-                    productProvider.setSearchQuery(
-                        value); // Using provider for state management
-                  },
-                  decoration: textFormFieldDecoration(
-                      hinttext: "Search Products...",
-                      prefixIcon: Icons.search)),
+                onChanged: (value) {
+                  productProvider.setSearchQuery(value);
+                },
+                decoration: textFormFieldDecoration(
+                  hinttext: "Search Products...",
+                  prefixIcon: Icons.search,
+                ),
+              ),
             ),
-
             // Product List
             Expanded(
               child: RefreshIndicator(

@@ -1,4 +1,4 @@
-import 'package:craftify_vendor/screens/home_page.dart';
+import 'package:craftify_vendor/screens/home/home_page.dart';
 import 'package:craftify_vendor/screens/products/products_page.dart';
 import 'package:craftify_vendor/screens/profile/profile_page.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'package:craftify_vendor/common/button.dart';
-import 'package:craftify_vendor/common/custom%20_app_bar.dart';
+import 'package:craftify_vendor/common/custom_app_bar.dart';
 import 'package:craftify_vendor/screens/products/product_model.dart';
 import 'package:flutter/material.dart';
 
@@ -8,16 +8,13 @@ class ProductDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     ProductModel product = args as ProductModel;
-    print(
-      product.imageUrls.length,
-    );
 
-    final double originalPrice = double.parse(product.price);
-    final double savings = originalPrice - double.parse(product.offerPrice);
-    final bool hasDiscount = double.parse(product.offerPrice) < originalPrice;
+    final double originalPrice = (product.price);
+    final double savings = product.price - product.offerPrice;
+    final bool hasDiscount = product.offerPrice < product.price;
 
     return Scaffold(
-      appBar: customAppBar(),
+      appBar: customAppBar(title: 'Product Details'),
       body: Column(
         children: [
           Expanded(
@@ -174,49 +171,12 @@ class ProductDetailPage extends StatelessWidget {
           Padding(
               padding: EdgeInsets.all(15),
               child: customButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/editProduct',
+                        arguments: product);
+                  },
                   buttonName: 'Edit Product',
                   color: Colors.cyan))
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddToCartBar(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade300,
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'ADD TO CART',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

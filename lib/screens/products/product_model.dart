@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class ProductModel {
   final int id;
   final int vendor;
@@ -8,9 +6,9 @@ class ProductModel {
   final String categoryName;
   final String productName;
   final String productDescription;
-  final String price;
-  final String offerPrice;
-  final String discount;
+  final double price;
+  final double offerPrice;
+  final double? discount;
   final bool isOfferProduct;
   final bool popularProducts;
   final bool newArrival;
@@ -28,7 +26,7 @@ class ProductModel {
     required this.productDescription,
     required this.price,
     required this.offerPrice,
-    required this.discount,
+    this.discount,
     required this.isOfferProduct,
     required this.popularProducts,
     required this.newArrival,
@@ -37,6 +35,7 @@ class ProductModel {
     required this.createdAt,
   });
 
+  /// Factory constructor to create a `Product` from JSON
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
       id: json['id'],
@@ -46,13 +45,15 @@ class ProductModel {
       categoryName: json['category_name'],
       productName: json['product_name'],
       productDescription: json['product_description'],
-      price: json['price'],
-      offerPrice: json['offerprice'],
-      discount: json['discount'],
-      isOfferProduct: json['isofferproduct'],
-      popularProducts: json['Popular_products'],
-      newArrival: json['newarrival'],
-      trendingOne: json['trending_one'],
+      price: double.tryParse(json['price'].toString()) ?? 0.0,
+      offerPrice: double.tryParse(json['offerprice'].toString()) ?? 0.0,
+      discount: json['discount'] != null
+          ? double.tryParse(json['discount'].toString())
+          : null,
+      isOfferProduct: json['isofferproduct'] ?? false,
+      popularProducts: json['Popular_products'] ?? false,
+      newArrival: json['newarrival'] ?? false,
+      trendingOne: json['trending_one'] ?? false,
       imageUrls: (json['image_urls'] as List)
           .map((img) => ProductImage.fromJson(img))
           .toList(),
@@ -60,6 +61,7 @@ class ProductModel {
     );
   }
 
+  /// Convert `Product` object to JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -69,9 +71,9 @@ class ProductModel {
       'category_name': categoryName,
       'product_name': productName,
       'product_description': productDescription,
-      'price': price,
-      'offerprice': offerPrice,
-      'discount': discount,
+      'price': price.toStringAsFixed(2),
+      'offerprice': offerPrice.toStringAsFixed(2),
+      'discount': discount?.toStringAsFixed(2),
       'isofferproduct': isOfferProduct,
       'Popular_products': popularProducts,
       'newarrival': newArrival,
@@ -81,10 +83,10 @@ class ProductModel {
     };
   }
 
-  static List<ProductModel> fromJsonList(String str) =>
-      List<ProductModel>.from(json.decode(str).map((x) => ProductModel.fromJson(x)));
+  /// Convert a JSON string to a list of `Product` objects
 }
 
+/// Model class for product images
 class ProductImage {
   final int id;
   final int product;

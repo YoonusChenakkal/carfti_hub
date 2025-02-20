@@ -58,12 +58,17 @@ class ProductRepository {
 
   //  Add Product API
   Future<void> addProduct({
+    required int userId,
     required String productName,
     required String productDescription,
     required String price,
     required String offerPrice,
     required int categoryId,
     required List<File> images,
+    required bool isOfferProduct,
+    required bool isPopularProduct,
+    required bool isNewArrival,
+    required bool isTrendingProduct,
   }) async {
     try {
       // Convert images to MultipartFile
@@ -72,17 +77,17 @@ class ProductRepository {
       );
 
       FormData formData = FormData.fromMap({
-        "vendor": 5,
+        "vendor": userId,
         "category_id": categoryId,
         "product_name": productName,
         "product_description": productDescription,
         "price": price,
         "offer_price": offerPrice,
         "images": multipartImages, // Send as MultipartFile list
-        "isofferproduct": true,
-        "Popular_products": false,
-        "newarrival": true,
-        "trending_one": false,
+        "isofferproduct": isOfferProduct,
+        "Popular_products": isPopularProduct,
+        "newarrival": isNewArrival,
+        "trending_one": isTrendingProduct,
       });
 
       // Print all data to the console
@@ -120,6 +125,57 @@ class ProductRepository {
       }
     } catch (e) {
       throw Exception('Unexpected error: $e');
+    }
+  }
+  //Edit Product
+
+  Future<void> updateProduct({
+    required int productId,
+    required String productName,
+    required String productDescription,
+    required String price,
+    required String offerPrice,
+    required int categoryId,
+    required bool isOfferProduct,
+    required bool isPopularProduct,
+    required bool isNewArrival,
+    required bool isTrendingProduct,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "category_id": categoryId,
+        "product_name": productName,
+        "product_description": productDescription,
+        "price": price,
+        "offer_price": offerPrice,
+        "isofferproduct": isOfferProduct,
+        "Popular_products": isPopularProduct,
+        "newarrival": isNewArrival,
+        "trending_one": isTrendingProduct,
+      });
+      print(formData);
+      // Send PATCH request
+      Response response = await dio.patch(
+        'https://purpleecommerce.pythonanywhere.com/productsapp/product/$productId/',
+        data: formData,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print('✅ Product updated successfully');
+      } else {
+        throw Exception('❌ Failed to update product: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        String errorMessage = e.response!.data.entries.first.value;
+        print('❌ API Error: $errorMessage');
+        throw Exception(
+            errorMessage.isNotEmpty ? errorMessage : 'Edit product failed');
+      } else {
+        throw Exception('❌ Network error: ${e.message}');
+      }
+    } catch (e) {
+      throw Exception('❌ Unexpected error: $e');
     }
   }
 }

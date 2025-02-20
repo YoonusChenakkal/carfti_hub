@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:craftify_vendor/common/flush_bar.dart';
 import 'package:craftify_vendor/const/local_storage.dart';
-import 'package:craftify_vendor/screens/profile/model/provider/profile_provider.dart';
+import 'package:craftify_vendor/screens/profile/provider/profile_provider.dart';
 import 'package:path/path.dart';
 import 'package:craftify_vendor/screens/Auth/Auth_repository.dart';
 import 'package:image_picker/image_picker.dart';
